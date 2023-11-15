@@ -8,9 +8,9 @@ class Integration_data():
     def __init__(self, get_data, first_try):
         self.categorical_encoding(get_data, first_try)
     def create_stay_id(self):
-        labels=pd.read_csv('./data/csv/labels.csv', header=0)
+        data=pd.read_csv('check_point_data.csv', index_col = 0)
 
-        hids=labels.iloc[:,0].to_list()
+        hids=data['stay_id'].unique().to_list()
         print("Total stay",len(hids))
         return hids
     
@@ -23,27 +23,17 @@ class Integration_data():
         else:
             data = pd.read_csv('Total.csv')
             
-        #encoding categorical
-        gen_encoder = LabelEncoder()
-        eth_encoder = LabelEncoder()
-        ins_encoder = LabelEncoder()
-
-        gen_encoder.fit(data['gender'])
-        eth_encoder.fit(data['ethnicity'])
-        ins_encoder.fit(data['insurance'])
-
-        data['gender']=gen_encoder.transform(data['gender'])
-        data['ethnicity']=eth_encoder.transform(data['ethnicity'])
-        data['insurance']=ins_encoder.transform(data['insurance'])
+        
 
         return data
         
             
     def getdata(self,ids):
         df_list = []   
+        data=pd.read_csv('check_point_data.csv')
         for sample in tqdm(ids):
             dyn=pd.read_csv('./data/csv/'+str(sample)+'/dynamic.csv',header=[0,1])
-            stat=pd.read_csv('./data/csv/'+str(sample)+'/static.csv')
+            stat = data[data['stay_id']==int(sample)]
             
             dyn.columns=dyn.columns.droplevel(0)
             columns_to_copy = ['subject_id', 'stay_id', 'hadm_id', 'Age', 'gender', 'ethnicity', 'insurance']
@@ -55,5 +45,19 @@ class Integration_data():
         df = pd.concat(df_list, axis = 0)
         
         print("total stay dataframe shape",df.shape)
+        
+        #encoding categorical
+        gen_encoder = LabelEncoder()
+        eth_encoder = LabelEncoder()
+        ins_encoder = LabelEncoder()
+
+        gen_encoder.fit(df['gender'])
+        eth_encoder.fit(df['ethnicity'])
+        ins_encoder.fit(df['insurance'])
+
+        df['gender']=gen_encoder.transform(df['gender'])
+        df['ethnicity']=eth_encoder.transform(df['ethnicity'])
+        df['insurance']=ins_encoder.transform(df['insurance'])
+        
         df.to_csv('Total.csv')
         return df

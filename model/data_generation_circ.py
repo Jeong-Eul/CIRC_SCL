@@ -38,8 +38,27 @@ class Generator():
         elif if_los:
             self.los_length(include_time)
             print("[ PROCESSED TIME SERIES TO EQUAL LENGTH  ]")
-        
-        self.smooth_meds(bucket)
+            
+        if bucket == 1:
+            
+            final_meds = meds[(meds['start_time']>0)&(meds['stop_time']>0)].copy()
+            final_ing= ing[(ing['start_time']>0)&(ing['stop_time']>0)].copy()
+            final_proc= proc.copy() 
+            final_out= out.copy()
+            final_chart= chart.copy()
+            final_labs= labs.copy()
+
+            feat_med = True
+            feat_ing = True
+            feat_proc = True
+            feat_out = True
+            feat_chart = True
+            impute = True
+            feat_lab = True
+            
+            self.create_Dict(final_meds,final_proc,final_out,final_chart,final_labs,final_ing)
+        else: 
+            self.smooth_meds(bucket)
         print("[ SUCCESSFULLY SAVED DATA DICTIONARIES ]")
     
     def generate_feat(self):
