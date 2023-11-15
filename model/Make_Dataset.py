@@ -8,9 +8,9 @@ class Integration_data():
     def __init__(self, get_data, first_try):
         self.categorical_encoding(get_data, first_try)
     def create_stay_id(self):
-        data=pd.read_csv('check_point_data.csv', index_col = 0)
+        data=pd.read_csv('demo.csv', index_col = 0)
 
-        hids=data['stay_id'].unique().to_list()
+        hids=data['stay_id'].unique()
         print("Total stay",len(hids))
         return hids
     
@@ -22,17 +22,15 @@ class Integration_data():
             
         else:
             data = pd.read_csv('Total.csv')
-            
         
-
         return data
         
             
     def getdata(self,ids):
         df_list = []   
-        data=pd.read_csv('check_point_data.csv')
+        data=pd.read_csv('demo.csv')
         for sample in tqdm(ids):
-            dyn=pd.read_csv('./data/csv/'+str(sample)+'/dynamic.csv',header=[0,1])
+            dyn=pd.read_csv('./data/csv/'+str(sample)+'.0/dynamic.csv',header=[0,1])
             stat = data[data['stay_id']==int(sample)]
             
             dyn.columns=dyn.columns.droplevel(0)
